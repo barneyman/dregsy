@@ -179,18 +179,18 @@ imgdregsy:
 #	assumes binary was built
 #
 	echo -e "\nBuilding Alpine-based image...\n"
-	docker build -t xelalex/$(REPO):latest-alpine \
+	docker build -t barney/$(REPO):latest-alpine \
 		--build-arg binaries=$(BINARIES) \
 		--build-arg SKOPEO_VERSION=$(SKOPEO_VERSION) \
 		-f ./hack/dregsy.alpine.Dockerfile .
 	# for historical reasons, the `xelalex/dregsy` image is the Alpine image
 	docker tag xelalex/$(REPO):latest-alpine xelalex/$(REPO):latest
-	echo -e "\n\nBuilding Ubuntu-based image...\n"
-	docker build -t xelalex/$(REPO):latest-ubuntu \
-		--build-arg binaries=$(BINARIES) \
-		--build-arg SKOPEO_VERSION=$(SKOPEO_VERSION) \
-		-f ./hack/dregsy.ubuntu.Dockerfile .
-	echo -e "\nDone\n"
+	# echo -e "\n\nBuilding Ubuntu-based image...\n"
+	# docker build -t xelalex/$(REPO):latest-ubuntu \
+	# 	--build-arg binaries=$(BINARIES) \
+	# 	--build-arg SKOPEO_VERSION=$(SKOPEO_VERSION) \
+	# 	-f ./hack/dregsy.ubuntu.Dockerfile .
+	# echo -e "\nDone\n"
 
 
 .PHONY: imgtests
