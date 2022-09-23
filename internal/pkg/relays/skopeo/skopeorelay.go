@@ -106,12 +106,16 @@ func (r *SkopeoRelay) Sync(opt *relays.SyncOptions) error {
 	}
 
 	srcCertDir := ""
-	repo, _, _ := util.SplitRef(opt.SrcRef)
+	srcPath := ""
+	repo, srcPath, _ := util.SplitRef(opt.SrcRef)
+	srcRepo := repo
 	if repo != "" {
 		srcCertDir = CertsDirForRepo(repo)
 		cmd = append(cmd, fmt.Sprintf("--src-cert-dir=%s", srcCertDir))
 	}
-	repo, _, _ = util.SplitRef(opt.TrgtRef)
+	destPath := ""
+	repo, destPath, _ = util.SplitRef(opt.TrgtRef)
+	destRepo := repo
 	if repo != "" {
 		cmd = append(cmd, fmt.Sprintf(
 			"--dest-cert-dir=%s/%s", certsBaseDir, withoutPort(repo)))
@@ -139,9 +143,21 @@ func (r *SkopeoRelay) Sync(opt *relays.SyncOptions) error {
 		log.WithFields(
 			log.Fields{"tag": t, "platform": opt.Platform}).Info("syncing tag")
 
-		rc := append(cmd,
-			fmt.Sprintf("docker://%s:%s", opt.SrcRef, t),
-			fmt.Sprintf("docker://%s:%s", opt.TrgtRef, t))
+		// special case - if it's docker-daemon it uses the local daemon store
+
+		if srcRepo == "docker-daemon" {
+			cmd = append(cmd, fmt.Sprintf("docker-daemon:%s:%s", srcPath, t))
+		} else {
+			cmd = append(cmd, fmt.Sprintf("docker://%s:%s", opt.SrcRef, t))
+		}
+
+		if destRepo == "docker-daemon" {
+			cmd = append(cmd, fmt.Sprintf("docker-daemon:%s:%s", destPath, t))
+		} else {
+			cmd = append(cmd, fmt.Sprintf("docker://%s:%s", opt.TrgtRef, t))
+		}
+
+		rc := cmd
 
 		switch opt.Platform {
 		case "":

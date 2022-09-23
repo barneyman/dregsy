@@ -50,7 +50,8 @@ tasks:
 
     # 'source' and 'target' are both required and describe the source and
     # target registries for this task:
-    #  - 'registry' points to the server; required
+    #  - 'registry' points to the server; required 
+    #    'docker-daemon' is a special value - it menas the local docker daemon storage
     #  - 'auth' contains the base64 encoded credentials for the registry
     #    in JSON form {"username": "...", "password": "..."}
     #  - 'auth-refresh' specifies an interval for automatic retrieval of
